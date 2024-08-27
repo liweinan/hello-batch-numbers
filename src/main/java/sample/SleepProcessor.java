@@ -10,7 +10,9 @@
 
 package sample;
 
-import javax.batch.api.chunk.ItemProcessor;
+
+import jakarta.batch.api.chunk.ItemProcessor;
+
 import javax.inject.Named;
 
 @Named

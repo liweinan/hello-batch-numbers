@@ -10,8 +10,9 @@
 
 package sample;
 
-import javax.batch.api.BatchProperty;
-import javax.batch.api.Batchlet;
+import jakarta.batch.api.BatchProperty;
+import jakarta.batch.api.Batchlet;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.validation.constraints.Email;
