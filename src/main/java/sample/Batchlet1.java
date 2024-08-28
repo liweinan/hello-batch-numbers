@@ -12,9 +12,9 @@ package sample;
 
 import jakarta.batch.api.BatchProperty;
 import jakarta.batch.api.Batchlet;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 

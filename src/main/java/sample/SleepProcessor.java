@@ -12,8 +12,8 @@ package sample;
 
 
 import jakarta.batch.api.chunk.ItemProcessor;
+import jakarta.inject.Named;
 
-import javax.inject.Named;
 
 @Named
 public class SleepProcessor implements ItemProcessor {
