@@ -16,19 +16,22 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <version.jakarta.batch-api>2.1.1</version.jakarta.batch-api>
+    <version.jberet.support>2.1.2.Final</version.jberet.support>
+    <version.validation.api>2.0.1.Final</version.validation.api>
+    <version.jakarta.servlet-api>6.1.0</version.jakarta.servlet-api>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.jberet</groupId>
       <artifactId>jberet-support</artifactId>
-      <version>2.1.2.Final</version>
+      <version>${version.jberet.support}</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
-      <version>2.0.1.Final</version>
+      <version>${version.validation.api}</version>
     </dependency>
     <dependency>
       <groupId>jakarta.batch</groupId>
@@ -46,7 +49,7 @@
     <dependency>
       <groupId>jakarta.servlet</groupId>
       <artifactId>jakarta.servlet-api</artifactId>
-      <version>6.1.0</version>
+      <version>${version.jakarta.servlet-api}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
