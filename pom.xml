@@ -4,7 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>sample</groupId>
+    <parent>
+        <artifactId>jberet-parent</artifactId>
+        <groupId>org.jberet</groupId>
+        <version>3.0.0.Final</version>
+    </parent>
+
     <artifactId>hello-batch-numbers</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
@@ -13,13 +18,22 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <galleon.fork.embedded>true</galleon.fork.embedded>
+        <jboss.home>${project.build.directory}${file.separator}wildfly</jboss.home>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
+        <server.test.feature.pack.artifactId>wildfly-ee-galleon-pack</server.test.feature.pack.artifactId>
+        <server.test.feature.pack.groupId>org.wildfly</server.test.feature.pack.groupId>
+        <version.com.ibm.jbatch.tck.spi>2.1.5</version.com.ibm.jbatch.tck.spi>
         <version.jakarta.batch-api>2.1.1</version.jakarta.batch-api>
-        <version.jberet.support>2.1.2.Final</version.jberet.support>
-        <version.validation.api>2.0.1.Final</version.validation.api>
-        <version.jakarta.servlet-api>6.1.0</version.jakarta.servlet-api>
         <version.jakarta.inject-api>2.0.1</version.jakarta.inject-api>
+        <version.jakarta.servlet-api>6.1.0</version.jakarta.servlet-api>
+        <version.jberet.support>2.1.2.Final</version.jberet.support>
+        <version.jberet>3.0.0.Final</version.jberet>
+        <version.org.jberet.jberet-core>${project.parent.version}</version.org.jberet.jberet-core>
+        <version.org.wildfly>30.0.1.Final</version.org.wildfly>
+        <version.validation.api>2.0.1.Final</version.validation.api>
+        <version.wildfly-maven-plugin>5.0.0.Final</version.wildfly-maven-plugin>
     </properties>
 
     <dependencies>
@@ -45,7 +59,6 @@
             <version>${version.jakarta.batch-api}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>jakarta.servlet</groupId>
             <artifactId>jakarta.servlet-api</artifactId>
@@ -53,11 +66,117 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
+
     <build>
-        <finalName>hello-batch-numbers</finalName>
-        <pluginManagement>
-            <plugins>
-            </plugins>
-        </pluginManagement>
+        <finalName>${project.artifactId}</finalName>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <!--                    <configuration>-->
+                <!--                        <warName>hello-batch-numbers</warName>-->
+                <!--                    </configuration>-->
+            </plugin>
+            <plugin>
+                <groupId>org.wildfly.plugins</groupId>
+                <artifactId>wildfly-maven-plugin</artifactId>
+                <version>${version.wildfly-maven-plugin}</version>
+                <configuration>
+                    <jboss-home>${jboss.home}</jboss-home>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>server-provisioning</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>provision</goal>
+                        </goals>
+                        <configuration>
+                            <provisioning-dir>${jboss.home}</provisioning-dir>
+                            <galleon-options>
+                                <jboss-fork-embedded>${galleon.fork.embedded}</jboss-fork-embedded>
+                            </galleon-options>
+                            <feature-packs>
+                                <feature-pack>
+                                    <groupId>${server.test.feature.pack.groupId}</groupId>
+                                    <artifactId>${server.test.feature.pack.artifactId}</artifactId>
+                                    <version>${version.org.wildfly}</version>
+                                    <inherit-configs>false</inherit-configs>
+                                    <included-configs>
+                                        <config>
+                                            <model>standalone</model>
+                                            <name>standalone-full.xml</name>
+                                        </config>
+                                        <config>
+                                            <model>standalone</model>
+                                            <name>standalone.xml</name>
+                                        </config>
+                                    </included-configs>
+                                    <excluded-packages>
+                                        <name>docs.schema</name>
+                                        <name>appclient</name>
+                                        <name>domain</name>
+                                    </excluded-packages>
+                                </feature-pack>
+                            </feature-packs>
+                            <channels>
+                                <channel>
+                                    <manifest>
+                                        <groupId>org.jberet</groupId>
+                                        <artifactId>jberet-channel-manifest</artifactId>
+                                        <version>${version.jberet}</version>
+                                    </manifest>
+                                </channel>
+                            </channels>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>wildfly-start</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>start</goal>
+                            <goal>deploy</goal>
+                        </goals>
+                        <configuration>
+                            <filename>${project.artifactId}.war</filename>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <phase>post-integration-test</phase>
+                        <id>wildfly-stop</id>
+                        <goals>
+                            <goal>shutdown</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>**/*ITest*</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <testClassesDirectory>${project.build.testOutputDirectory}</testClassesDirectory>
+                    <includes>
+                        <include>**/*ITest*</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 </project>
