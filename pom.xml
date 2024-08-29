@@ -34,6 +34,7 @@
         <version.org.wildfly>30.0.1.Final</version.org.wildfly>
         <version.validation.api>2.0.1.Final</version.validation.api>
         <version.wildfly-maven-plugin>5.0.0.Final</version.wildfly-maven-plugin>
+        <skip.configuration>false</skip.configuration>
     </properties>
 
     <dependencies>
@@ -129,6 +130,21 @@
                                     </manifest>
                                 </channel>
                             </channels>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>configure-wildfly</id>
+                        <phase>pre-integration-test</phase>
+                        <goals>
+                            <goal>execute-commands</goal>
+                        </goals>
+                        <configuration>
+                            <skip>${skip.configuration}</skip>
+                            <jboss-home>${jboss.home}</jboss-home>
+                            <offline>true</offline>
+                            <scripts>
+                                <script>${project.build.outputDirectory}/configure-wildfly.cli</script>
+                            </scripts>
                         </configuration>
                     </execution>
                     <execution>

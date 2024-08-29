@@ -28,6 +28,12 @@ public class StartServlet extends HttpServlet {
         out.println("Started job execution: " + jobName + " " + jobExecutionId);
         out.flush();
         out.close();
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("text/plain");
+        PrintWriter writer = response.getWriter();
+        writer.println("Started job execution: " + jobName + " " + jobExecutionId);
+
     }
 
 }

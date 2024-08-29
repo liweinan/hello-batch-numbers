@@ -19,3 +19,32 @@ curl http://localhost:8080/hello-batch-numbers/start
 
 [standalone@localhost:9990 /]
 ```
+
+---
+
+Start the server:
+
+```bash
+$ mvn wildfly:run
+```
+
+---
+
+Start the job:
+
+```bash
+➤ curl http://localhost:8080/hello-batch-numbers/start
+Started job execution: numbers 1
+```
+
+--
+
+Stop the job:
+
+```bash
+➤ curl 'http://localhost:8080/hello-batch-numbers/stop?id=1'
+1: STOPPED
+```
+
+---
+
